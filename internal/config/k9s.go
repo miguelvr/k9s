@@ -7,6 +7,7 @@ import (
 const (
 	defaultRefreshRate  = 2
 	defaultMaxConnRetry = 5
+	defaultDebugImage   = "busybox:1.35.0"
 )
 
 // K9s tracks K9s configuration options.
@@ -27,6 +28,7 @@ type K9s struct {
 	Clusters            map[string]*Cluster `yaml:"clusters,omitempty"`
 	Thresholds          Threshold           `yaml:"thresholds"`
 	ScreenDumpDir       string              `yaml:"screenDumpDir"`
+	DefaultDebugImage   string              `yaml:"defaultDebugImage"`
 	manualRefreshRate   int
 	manualHeadless      *bool
 	manualLogoless      *bool
@@ -39,12 +41,13 @@ type K9s struct {
 // NewK9s create a new K9s configuration.
 func NewK9s() *K9s {
 	return &K9s{
-		RefreshRate:   defaultRefreshRate,
-		MaxConnRetry:  defaultMaxConnRetry,
-		Logger:        NewLogger(),
-		Clusters:      make(map[string]*Cluster),
-		Thresholds:    NewThreshold(),
-		ScreenDumpDir: K9sDefaultScreenDumpDir,
+		RefreshRate:       defaultRefreshRate,
+		MaxConnRetry:      defaultMaxConnRetry,
+		Logger:            NewLogger(),
+		Clusters:          make(map[string]*Cluster),
+		Thresholds:        NewThreshold(),
+		ScreenDumpDir:     K9sDefaultScreenDumpDir,
+		DefaultDebugImage: defaultDebugImage,
 	}
 }
 

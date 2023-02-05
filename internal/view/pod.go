@@ -295,6 +295,34 @@ func shellIn(a *App, fqn, co string) {
 	}
 }
 
+func debugIn(a *App, fqn, co string) {
+	args := computeDebugArgs(fqn, co, a.Conn().Config().Flags().KubeConfig, a.Config.K9s.DefaultDebugImage)
+
+	c := color.New(color.BgGreen).Add(color.FgBlack).Add(color.Bold)
+	if !runK(a, shellOpts{clear: true, banner: c.Sprintf(bannerFmt, fqn, co), args: args}) {
+		a.Flash().Err(errors.New("Debug failed"))
+	}
+}
+
+func computeDebugArgs(path, co string, kcfg *string, image string) []string {
+	args := make([]string, 0, 15)
+	args = append(args, "debug", "-it")
+
+	ns, po := client.Namespaced(path)
+	if ns != client.AllNamespaces {
+		args = append(args, "-n", ns)
+	}
+	args = append(args, po)
+	if kcfg != nil && *kcfg != "" {
+		args = append(args, "--kubeconfig", *kcfg)
+	}
+
+	args = append(args, "--target", co)
+	args = append(args, "--image", image)
+
+	return args
+}
+
 func containerAttachIn(a *App, comp model.Component, path, co string) error {
 	if co != "" {
 		resumeAttachIn(a, comp, path, co)
